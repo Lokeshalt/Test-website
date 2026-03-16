@@ -85,7 +85,7 @@ function sendWhatsApp() {
   text += '*Exam / Purpose:* ' + exam + '\n';
   if (msg)   text += '*Message:* ' + msg + '\n';
 
-  var WA_NUMBER = '918949701991';
+  var WA_NUMBER = '91...';
   var url = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(text);
   window.open(url, '_blank');
 }
