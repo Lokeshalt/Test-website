@@ -91,9 +91,104 @@ function sendWhatsApp() {
 }
 
 
+/* Gallery lightbox
+   Initializes only on pages that include the gallery viewer markup. */
+function initGalleryLightbox() {
+  var lightbox = document.getElementById('gallery-lightbox');
+  if (!lightbox) return;
+
+  var galleryItems = Array.from(document.querySelectorAll('.masonry-item:not(.placeholder)'));
+  if (!galleryItems.length) return;
+
+  var lightboxImage = lightbox.querySelector('.lightbox-image');
+  var lightboxCaption = lightbox.querySelector('.lightbox-caption');
+  var closeButton = lightbox.querySelector('.lightbox-close');
+  var prevButton = lightbox.querySelector('.lightbox-prev');
+  var nextButton = lightbox.querySelector('.lightbox-next');
+  var activeIndex = 0;
+
+  function renderLightbox(index) {
+    var item = galleryItems[index];
+    var image = item.querySelector('img');
+    var caption = item.querySelector('.photo-caption');
+
+    activeIndex = index;
+    lightboxImage.src = image.src;
+    lightboxImage.alt = image.alt;
+    lightboxCaption.textContent = caption ? caption.textContent : image.alt;
+  }
+
+  function openLightbox(index) {
+    renderLightbox(index);
+    lightbox.classList.add('is-open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('lightbox-open');
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('is-open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('lightbox-open');
+  }
+
+  function showNext(step) {
+    var nextIndex = (activeIndex + step + galleryItems.length) % galleryItems.length;
+    renderLightbox(nextIndex);
+  }
+
+  galleryItems.forEach(function (item, index) {
+    item.setAttribute('role', 'button');
+    item.setAttribute('tabindex', '0');
+    item.setAttribute('aria-label', 'Open photo viewer');
+
+    item.addEventListener('click', function () {
+      openLightbox(index);
+    });
+
+    item.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openLightbox(index);
+      }
+    });
+  });
+
+  closeButton.addEventListener('click', closeLightbox);
+  prevButton.addEventListener('click', function () {
+    showNext(-1);
+  });
+  nextButton.addEventListener('click', function () {
+    showNext(1);
+  });
+
+  lightbox.addEventListener('click', function (event) {
+    if (event.target === lightbox) {
+      closeLightbox();
+    }
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (!lightbox.classList.contains('is-open')) {
+      return;
+    }
+
+    if (event.key === 'Escape') {
+      closeLightbox();
+    } else if (event.key === 'ArrowLeft') {
+      showNext(-1);
+    } else if (event.key === 'ArrowRight') {
+      showNext(1);
+    }
+  });
+}
+
+
 /* ── INIT ────────────────────────────────────────────────────
    Run on page load.
    ──────────────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', function () {
-  renderOccupancy();
+  if (document.getElementById('seatGrid')) {
+    renderOccupancy();
+  }
+  initGalleryLightbox();
 });
