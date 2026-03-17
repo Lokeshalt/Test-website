@@ -386,7 +386,7 @@ footer { background: var(--ink); color: rgba(245,240,232,0.42); padding: 1.8rem 
 }
 @media (max-width: 875px) {
   .nav-logo {
-    --nav-logo-size: 2rem;
+    --nav-logo-size: 2.75rem;
     flex-direction: column;
     align-items: center;
     gap: 0.05rem;
