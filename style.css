@@ -69,7 +69,7 @@ nav {
 .nav-back::before { content: '←'; font-size: 0.9rem; }
 
 /* ── SHARED SECTION STYLES ── */
-section { padding: 5rem 5vw; }
+section { padding: 3.5rem 5vw; }
 .section-label { font-size: 0.69rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--gold-dark); font-weight: 500; margin-bottom: 0.6rem; }
 .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.7rem, 3vw, 2.5rem); line-height: 1.2; color: var(--ink); margin-bottom: 0.9rem; }
 .section-sub { font-size: 0.95rem; color: var(--muted); line-height: 1.7; max-width: 52ch; }
@@ -82,7 +82,7 @@ section { padding: 5rem 5vw; }
 .btn-outline:hover { border-color: var(--gold); color: var(--gold-dark); }
 
 /* ── HERO ── */
-.hero { padding: 5rem 5vw; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 4rem; position: relative; overflow: hidden; }
+.hero {display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 4rem; position: relative; overflow: hidden; }
 .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 60% at 70% 40%, rgba(200,146,42,0.09) 0%, transparent 70%), radial-gradient(ellipse 40% 50% at 20% 80%, rgba(74,103,65,0.06) 0%, transparent 60%); pointer-events: none; }
 .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 0.71rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-dark); font-weight: 500; margin-bottom: 1.2rem; }
 .hero-eyebrow::before { content: ''; display: block; width: 28px; height: 1.5px; background: var(--gold); }
@@ -385,7 +385,7 @@ footer { background: var(--ink); color: rgba(245,240,232,0.42); padding: 1.8rem 
   .gallery-teaser-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 720px) {
-  .hero { grid-template-columns: 1fr; padding-top: 3rem; padding-bottom: 3rem; }
+  .hero { grid-template-columns: 1fr;}
   .hero-visual { display: none; }
   .occ-grid { grid-template-columns: 1fr; }
   .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
@@ -408,4 +408,5 @@ footer { background: var(--ink); color: rgba(245,240,232,0.42); padding: 1.8rem 
     right: 0.75rem;
   }
   .lightbox-image { max-height: calc(100vh - 8rem); }
+  section { padding-top: 2rem; padding-bottom: 2rem;}
 }
