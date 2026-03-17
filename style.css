@@ -1,8 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500;700&family=Oswald:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;700&family=Oswald:wght@600&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
+  --dark-ink: #4a0e10;
   --ink: #1a1208;
   --cream: #f5f0e8;
   --warm: #ede5d5;
@@ -27,12 +28,12 @@ nav {
   padding: 0 5vw; display: flex; align-items: center; justify-content: space-between; height: 60px;
 }
 .nav-logo {
-  --nav-logo-size: 2.5rem;
+  --nav-logo-size: 3.0rem;
   font-family: 'Playfair Display', 'DM Sans', sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: 600;
   line-height: 1;
-  color: var(--ink);
+  color: var(--dark-ink);
   letter-spacing: -0.03em;
   text-decoration: none;
   display: inline-flex;
@@ -46,11 +47,21 @@ nav {
   display: block;
   flex-shrink: 0;
 }
-.nav-logo-text {
+.nav-logo-text {  
   display: inline-flex;
   align-items: baseline;
   transform: translateY(1px);
+  gap: 0.1em;
 }
+.nav-logo-study {
+  color: var(--dark-ink);
+  font-weight: 400;
+}
+.nav-logo-mantra {
+  color: var(--gold-dark);
+  font-weight: 700;
+}
+
 .nav-links { display: flex; gap: 2rem; list-style: none; }
 .nav-links a { text-decoration: none; font-size: 0.84rem; color: var(--muted); letter-spacing: 0.03em; transition: color 0.2s; }
 .nav-links a:hover { color: var(--gold); }
@@ -375,10 +386,20 @@ footer { background: var(--ink); color: rgba(245,240,232,0.42); padding: 1.8rem 
 }
 @media (max-width: 875px) {
   .nav-logo {
-    --nav-logo-size: 3rem;
-    gap: 0;
+    --nav-logo-size: 2rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.05rem;
   }
-  .nav-logo-text { display: none; }
+  .nav-logo-text {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.1em;
+    line-height: 1;
+    font-size: 1rem;
+    transform: translateY(-5px);
+  }
 }
 @media (max-width: 800px) {
   .plans-grid { grid-template-columns: 1fr; }
