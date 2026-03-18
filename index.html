@@ -28,8 +28,9 @@
       onerror="this.style.display='none';"
     />
     <span class="nav-logo-text">
-      <span class="nav-logo-study">Study</span>
+      <span class="nav-logo-mantra">Study</span>
       <span class="nav-logo-mantra">Mantra</span>
+      <span class="nav-logo-mantra">Library</span>
     </span>
   </a>
   <ul class="nav-links">
@@ -104,7 +105,7 @@
     <div class="service-card">
       <div class="service-icon">⚡</div>
       <div class="service-name">Free High-Speed Wi-Fi</div>
-      <div class="service-desc">Complimentary high-speed internet at every seat. Stream lectures and download resources without interruption.</div>
+      <div class="service-desc">Complimentary 100 Mbps internet at every seat. Stream lectures and download resources without interruption.</div>
       <span class="service-tag">Always On</span>
     </div>
     <div class="service-card">
@@ -214,9 +215,9 @@
     <div>
       <div class="seat-grid" id="seatGrid"></div>
       <div class="seat-legend">
-        <div class="legend-item"><div class="legend-dot" style="background:var(--warm);border:1px solid var(--border)"></div> Available</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div> Occupied</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--rust);opacity:0.8"></div> Reserved</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--moss);border:1px solid var(--moss-dark)"></div> Available</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div> Half-day</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--rust)"></div> Full-day (reserved)</div>
       </div>
     </div>
 
@@ -238,21 +239,21 @@
       </div>
 
       <div class="occ-stat-card">
-        <div class="occ-stat-label">Occupancy by Slot</div>
+        <div class="occ-stat-label">Occupancy by Plan Type</div>
         <div class="occ-slots">
           <div>
             <div class="occ-slot-row">
-              <span class="occ-slot-name">Morning &nbsp;·&nbsp; 6 AM – 1 PM</span>
-              <span class="occ-slot-pct" id="occ-morning-pct"></span>
+              <span class="occ-slot-name">Half-Day</span>
+              <span class="occ-slot-pct" id="occ-half-day-pct"></span>
             </div>
-            <div class="occ-bar" style="margin-top:4px"><div class="occ-bar-fill" id="occ-morning-bar"></div></div>
+            <div class="occ-bar" style="margin-top:4px"><div class="occ-bar-fill" id="occ-half-day-bar"></div></div>
           </div>
           <div>
             <div class="occ-slot-row">
-              <span class="occ-slot-name">Evening &nbsp;·&nbsp; 1 PM – 11 PM</span>
-              <span class="occ-slot-pct" id="occ-evening-pct"></span>
+              <span class="occ-slot-name">Full-Day (reserved)</span>
+              <span class="occ-slot-pct" id="occ-full-day-pct"></span>
             </div>
-            <div class="occ-bar" style="margin-top:4px"><div class="occ-bar-fill sage" id="occ-evening-bar"></div></div>
+            <div class="occ-bar" style="margin-top:4px"><div class="occ-bar-fill rust" id="occ-full-day-bar"></div></div>
           </div>
         </div>
       </div>
@@ -277,11 +278,12 @@
     <div class="plan-card">
       <div class="plan-slot-tag">Half Day · Morning</div>
       <div class="plan-name">Morning Slot</div>
-      <div class="plan-timing">6:00 AM – 1:00 PM</div>
-      <div class="plan-price">₹599 <span>/ month</span></div>
+      <div class="plan-timing">6:00 AM – 2:30 PM</div>
+      <div class="plan-price">₹499 <span>/ month</span></div>
       <div class="plan-desc">For early risers. Lock in the most productive hours of the day before the afternoon rush.</div>
       <ul class="plan-features">
-        <li>7 hours of access daily</li>
+        <li>1 Day free demo</li>
+        <li>8.5 hours of access daily</li>
         <li>Free high-speed WiFi</li>
         <li>AC hall + inverter backup</li>
         <li>RO water included</li>
@@ -293,11 +295,12 @@
     <div class="plan-card">
       <div class="plan-slot-tag">Half Day · Evening</div>
       <div class="plan-name">Evening Slot</div>
-      <div class="plan-timing">1:00 PM – 11:00 PM</div>
-      <div class="plan-price">₹599 <span>/ month</span></div>
+      <div class="plan-timing">2:30 PM – 11:00 PM</div>
+      <div class="plan-price">₹499 <span>/ month</span></div>
       <div class="plan-desc">For afternoon and night grinders. A long uninterrupted stretch well into the evening.</div>
       <ul class="plan-features">
-        <li>10 hours of access daily</li>
+        <li>1 Day free demo</li>
+        <li>8.5 hours of access daily</li>
         <li>Free high-speed WiFi</li>
         <li>AC hall + inverter backup</li>
         <li>RO water included</li>
@@ -314,6 +317,7 @@
       <div class="plan-price">₹699 <span>/ month</span></div>
       <div class="plan-desc">Maximum flexibility. Come and go anytime across the full 17-hour library window.</div>
       <ul class="plan-features">
+        <li>1 Day free demo</li>
         <li>17 hours of access daily</li>
         <li>Flexible entry &amp; exit</li>
         <li>Free high-speed WiFi</li>

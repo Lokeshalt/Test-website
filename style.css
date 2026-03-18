@@ -10,6 +10,9 @@
   --gold: #c8922a;
   --gold-dark: #9a6e1c;
   --rust: #b84c2b;
+  --rust-dark: #8a3420;
+  --moss: #5e7a47;
+  --moss-dark: #456036;
   --sage: #4a6741;
   --text: #2c2416;
   --muted: #6b5c44;
@@ -171,9 +174,9 @@ section { padding: 4rem 5vw; }
 .occ-updated { font-size: 0.78rem; color: var(--muted); font-style: italic; }
 .occ-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start; }
 .seat-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; }
-.seat { aspect-ratio: 1; border-radius: 2px; background: var(--warm); border: 1px solid var(--border); }
-.seat.occupied { background: var(--gold); border-color: var(--gold-dark); }
-.seat.reserved { background: var(--rust); border-color: #8a3420; opacity: 0.8; }
+.seat { aspect-ratio: 1; border-radius: 2px; background: var(--moss); border: 1px solid var(--moss-dark); }
+.seat.half-day { background: var(--gold); border-color: var(--gold-dark); }
+.seat.full-day-reserved { background: var(--rust); border-color: var(--rust-dark); }
 .seat-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 1rem; font-size: 0.75rem; color: var(--muted); }
 .legend-item { display: flex; align-items: center; gap: 5px; }
 .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
@@ -185,6 +188,7 @@ section { padding: 4rem 5vw; }
 .occ-bar-wrap { margin-top: 0.7rem; }
 .occ-bar { height: 8px; background: var(--warm); border-radius: 4px; overflow: hidden; }
 .occ-bar-fill { height: 100%; border-radius: 4px; background: var(--gold); }
+.occ-bar-fill.rust { background: var(--rust); }
 .occ-slots { display: flex; flex-direction: column; gap: 8px; margin-top: 0.8rem; }
 .occ-slot-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; }
 .occ-slot-name { color: var(--muted); }

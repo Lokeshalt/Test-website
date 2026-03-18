@@ -8,12 +8,10 @@
    Everything else (grid, stats, bars) recalculates automatically.
    ──────────────────────────────────────────────────────────── */
 var OCC = {
-  total:    67,
-  occupied: 17,   // ← number of seats currently occupied
-  reserved: 4,    // ← number of seats held/booked
-  date:     "16 March 2026",  // ← date of last update
-  morning:  12,   // ← morning slot occupancy %  (6 AM – 2 PM)
-  evening:  5    // ← evening slot occupancy %  (2 PM – 11 PM)
+  total:             67,
+  halfDay:           3,   // ← number of Half-day seats
+  fullDayReserved:   35,  // ← number of Full-day (reserved) seats
+  date:              "18 March 2026"  // ← date of last update
 };
 /* ──────────────────────────────────────────────────────────── */
 
@@ -22,9 +20,10 @@ var OCC = {
    Reads OCC config above and populates the occupancy section.
    ──────────────────────────────────────────────────────────── */
 function renderOccupancy() {
-  var o     = OCC;
-  var avail = o.total - o.occupied - o.reserved;
-  var pct   = Math.round((o.occupied / o.total) * 100);
+  var o      = OCC;
+  var taken  = o.halfDay + o.fullDayReserved;
+  var avail  = o.total - taken;
+  var pct    = Math.round(taken / o.total * 100);
 
   // Date label
   document.getElementById('occ-date').textContent = 'Updated on: ' + o.date;
@@ -33,22 +32,25 @@ function renderOccupancy() {
   document.getElementById('occ-avail').textContent     = avail;
   document.getElementById('occ-avail-sub').textContent = 'of ' + o.total + ' total seats';
   document.getElementById('occ-pct').textContent       = pct + '%';
-  document.getElementById('occ-taken-sub').textContent = o.occupied + ' seats taken';
+  document.getElementById('occ-taken-sub').textContent = taken + ' seats occupied';
   document.getElementById('occ-bar').style.width       = pct + '%';
 
-  // Slot bars
-  document.getElementById('occ-morning-pct').textContent = o.morning + '%';
-  document.getElementById('occ-morning-bar').style.width = o.morning + '%';
-  document.getElementById('occ-evening-pct').textContent = o.evening + '%';
-  document.getElementById('occ-evening-bar').style.width = o.evening + '%';
+  // Plan type bars
+  var halfDayPct = Math.round((o.halfDay / o.total) * 100);
+  var fullDayPct = Math.round((o.fullDayReserved / o.total) * 100);
+  document.getElementById('occ-half-day-pct').textContent = halfDayPct + '%';
+  document.getElementById('occ-half-day-bar').style.width = halfDayPct + '%';
+  document.getElementById('occ-full-day-pct').textContent = fullDayPct + '%';
+  document.getElementById('occ-full-day-bar').style.width = fullDayPct + '%';
 
   // Build seat grid
   var grid = document.getElementById('seatGrid');
+  grid.innerHTML = '';
   for (var i = 0; i < o.total; i++) {
     var s = document.createElement('div');
     s.className = 'seat' +
-      (i < o.occupied              ? ' occupied' :
-       i < o.occupied + o.reserved ? ' reserved' : '');
+      (i < o.halfDay                  ? ' half-day' :
+       i < o.halfDay + o.fullDayReserved ? ' full-day-reserved' : '');
     grid.appendChild(s);
   }
 }
