@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallery - Study Mantra Library</title>
+  <meta
+    name="description"
+    content="Photos of Study Mantra Library - the study hall, cabins, amenities, and community events."
+  />
+  <link rel="icon" type="image/png" href="images/favicon.ico" />
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- MINIMAL NAV -->
+<nav class="nav-minimal">
+  <a class="nav-logo" href="index.html">
+    <img
+      class="nav-logo-mark"
+      src="images/logo.png"
+      alt="Study Mantra"
+      onerror="this.style.display='none';"
+    />
+    <span class="nav-logo-text">
+      <span class="nav-logo-study">Study</span>
+      <span class="nav-logo-mantra">Mantra</span>
+    </span>
+  </a>
+  <a class="nav-back" href="index.html">Back to Home</a>
+</nav>
+
+<!-- GALLERY HERO -->
+<div class="gallery-hero fade-up">
+  <div class="section-label">Gallery</div>
+  <h1>Inside Study Mantra</h1>
+  <p>A look at our study halls, cabins, and the moments we share together - from daily study sessions to special events.</p>
+</div>
+
+<!-- LIBRARY PHOTOS -->
+<section class="gallery-section">
+  <div class="gallery-section-header">
+    <div class="gallery-section-title">The Library</div>
+    <div class="gallery-section-count">Space &amp; Amenities</div>
+  </div>
+
+  <div class="masonry" id="library-grid">
+    <div class="masonry-item">
+      <img src="images/Office.webp" alt="Front Office" loading="lazy" />
+      <div class="photo-caption">Front Desk</div>
+    </div>
+    <div class="masonry-item">
+      <img src="images/Hall.webp" alt="Study Hall" loading="lazy" />
+      <div class="photo-caption">Study Hall</div>
+    </div>
+    <div class="masonry-item">
+      <img src="images/Hall2.webp" alt="Study Hall" loading="lazy" />
+      <div class="photo-caption">Study Hall</div>
+    </div>
+    <div class="masonry-item">
+      <img src="images/Hall3.webp" alt="Study Hall" loading="lazy" />
+      <div class="photo-caption">Study Hall</div>
+    </div>
+    <div class="masonry-item">
+      <img src="images/Hall4.webp" alt="Study Hall" loading="lazy" />
+      <div class="photo-caption">Study Hall</div>
+    </div>
+    <!--
+      HOW TO ADD PHOTOS:
+      Replace each placeholder block with:
+
+      <div class="masonry-item">
+        <img src="images/your-photo.jpg" alt="Brief description" loading="lazy" />
+        <div class="photo-caption">Caption text here</div>
+      </div>
+
+      Tips:
+      - Put your photos in an "images/" folder next to this HTML file
+      - Use JPG for photos, PNG for graphics
+      - Add loading="lazy" to keep the page fast
+      - Vary portrait and landscape images for a natural masonry feel
+      - Keep captions short (1-4 words) for best appearance
+    -->
+  </div>
+</section>
+
+<hr class="gallery-divider" />
+
+<!-- EVENTS -->
+<section class="gallery-section">
+  <div class="gallery-section-header">
+    <div class="gallery-section-title">Events</div>
+    <div class="gallery-section-count">Community Moments</div>
+  </div>
+
+  <!--
+    HOW TO ADD A NEW EVENT:
+    Copy this block and paste it below the last event block.
+    Replace the title, date, and photo placeholders.
+
+    <div style="margin-bottom: 3rem;">
+      <div style="margin-bottom: 1.2rem;">
+        <div style="font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--ink); margin-bottom:2px;">Event Name Here</div>
+        <div style="font-size:0.76rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em;">DD Month YYYY</div>
+      </div>
+      <div class="masonry">
+        <div class="masonry-item"><img src="images/event-photo.jpg" alt="Event photo" loading="lazy" /></div>
+      </div>
+    </div>
+  -->
+
+  <div style="margin-bottom: 3rem;">
+    <div style="margin-bottom: 1.2rem;">
+      <div style="font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--ink); margin-bottom:2px;">Inaugural Day</div>
+      <div style="font-size:0.76rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em;">Add Date Here</div>
+    </div>
+    <div class="masonry">
+      <div class="masonry-item placeholder" style="padding:3.5rem 1rem;">
+        <div class="ph-icon">Photo</div>
+        <div class="ph-label">Event Photo</div>
+      </div>
+      <div class="masonry-item placeholder" style="padding:4rem 1rem;">
+        <div class="ph-icon">Photo</div>
+        <div class="ph-label">Event Photo</div>
+      </div>
+      <div class="masonry-item placeholder" style="padding:3rem 1rem;">
+        <div class="ph-icon">Photo</div>
+        <div class="ph-label">Event Photo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add more events below this comment -->
+</section>
+
+<div class="lightbox" id="gallery-lightbox" aria-hidden="true">
+  <button class="lightbox-close" type="button" aria-label="Close photo viewer">&times;</button>
+  <button class="lightbox-nav lightbox-prev" type="button" aria-label="Previous photo">&#10094;</button>
+  <figure class="lightbox-figure">
+    <img class="lightbox-image" src="" alt="" />
+    <figcaption class="lightbox-caption"></figcaption>
+  </figure>
+  <button class="lightbox-nav lightbox-next" type="button" aria-label="Next photo">&#10095;</button>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand-block">
+  <span class="footer-brand">Study Mantra Library</span>
+  <span class="footer-copy">© 2026 Study Mantra Library</span>
+  </div>
+  <span>Gali No. 4-B, Sundar Nagar, Kotda, Ajmer | 8949701991</span>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="https://maps.app.goo.gl/yKN7cbYZ8u37CAK4A" target="_blank">Maps</a>
+    <a href="https://www.youtube.com/@StudyMantraLibrary" target="_blank">YouTube</a>
+    <a href="https://www.instagram.com/studymantralibraryajmer/" target="_blank">Instagram</a>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
