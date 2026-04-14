@@ -156,9 +156,26 @@ function buildSnapshot(csvText) {
   };
 }
 
-function fetchCsv(url) {
+function fetchCsv(url, redirectCount = 0) {
   return new Promise((resolve, reject) => {
     https.get(url, (response) => {
+      if (
+        response.statusCode >= 300 &&
+        response.statusCode < 400 &&
+        response.headers.location
+      ) {
+        if (redirectCount >= 5) {
+          reject(new Error('Too many redirects while fetching the occupancy CSV.'));
+          response.resume();
+          return;
+        }
+
+        const nextUrl = new URL(response.headers.location, url).toString();
+        response.resume();
+        resolve(fetchCsv(nextUrl, redirectCount + 1));
+        return;
+      }
+
       if (response.statusCode !== 200) {
         reject(new Error(`Request failed with status ${response.statusCode}.`));
         response.resume();
