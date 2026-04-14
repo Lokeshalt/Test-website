@@ -4,18 +4,20 @@
 
 
 /* ── OCCUPANCY CONFIG ────────────────────────────────────────
-   Keep the fallback values below for times when the sheet is
-   unavailable. To enable auto-refresh, paste the public Google
-   Sheets CSV URL into OCC_CSV_URL.
+   Keep the fallback values below for times when both the
+   snapshot file and live refresh are unavailable. The page now
+   loads occupancy.json first and uses OCC_CSV_URL only for the
+   manual refresh button.
    ──────────────────────────────────────────────────────────── */
 var OCC = {
   total:             67,
   halfDay:           3,   // ← number of Half-day seats
   fullDayReserved:   35,  // ← number of Full-day (reserved) seats
-  date:              "18 March 2026 (fallback)"  // ← last known update
+  date:              "18 March 2026 (fallback)",  // ← last known update
+  seatStatuses:      null
 };
+var OCC_SNAPSHOT_URL = 'occupancy.json';
 var OCC_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTvw5mFJQ-esd6lSpevUKdpzphem3oD5mcVnNbds9TjPRSu929Q8t1eCz7uuoTVeI8FLKTcFSpAeJWY/pub?output=csv';
-var OCC_POLL_INTERVAL_MS = 30 * 60 * 1000;
 var OCC_REFRESH_BUTTON_LABEL = 'Refresh Now';
 var occRefreshInFlight = false;
 /* ──────────────────────────────────────────────────────────── */
@@ -55,6 +57,93 @@ function classifyOccupancyStatus(value) {
     return 'fullDayReserved';
   }
   return '';
+}
+
+function createSeatStatusMap(totalSeats) {
+  var seatStatuses = {};
+
+  for (var seat = 1; seat <= totalSeats; seat++) {
+    seatStatuses[seat] = 'available';
+  }
+
+  return seatStatuses;
+}
+
+function buildFallbackSeatStatuses(totalSeats, halfDayCount, fullDayReservedCount) {
+  var seatStatuses = createSeatStatusMap(totalSeats);
+
+  for (var seat = 1; seat <= totalSeats; seat++) {
+    if (seat <= halfDayCount) {
+      seatStatuses[seat] = 'halfDay';
+    } else if (seat <= halfDayCount + fullDayReservedCount) {
+      seatStatuses[seat] = 'fullDayReserved';
+    }
+  }
+
+  return seatStatuses;
+}
+
+function countSeatStatuses(seatStatuses, totalSeats) {
+  var counts = {
+    halfDay: 0,
+    fullDayReserved: 0
+  };
+
+  for (var seat = 1; seat <= totalSeats; seat++) {
+    if (seatStatuses[seat] === 'halfDay') {
+      counts.halfDay++;
+    } else if (seatStatuses[seat] === 'fullDayReserved') {
+      counts.fullDayReserved++;
+    }
+  }
+
+  return counts;
+}
+
+function normalizeOccupancyEntries(entries, totalSeats) {
+  if (!Array.isArray(entries)) {
+    throw new Error('Seat data must be an array.');
+  }
+
+  var seatStatuses = createSeatStatusMap(totalSeats);
+  var validRows = 0;
+
+  for (var i = 0; i < entries.length; i++) {
+    var entry = entries[i];
+    if (!entry || typeof entry !== 'object') {
+      continue;
+    }
+
+    var seatNumber = parseInt(String(entry.seat || '').trim(), 10);
+    if (isNaN(seatNumber) || seatNumber < 1 || seatNumber > totalSeats) {
+      continue;
+    }
+
+    var statusType = classifyOccupancyStatus(entry.status);
+    if (!statusType) {
+      continue;
+    }
+
+    seatStatuses[seatNumber] = statusType;
+    validRows++;
+  }
+
+  if (!validRows) {
+    throw new Error('No valid seat rows were found.');
+  }
+
+  return {
+    seatStatuses: seatStatuses,
+    counts: countSeatStatuses(seatStatuses, totalSeats)
+  };
+}
+
+function applyOccupancyState(seatStatuses, dateLabel) {
+  var counts = countSeatStatuses(seatStatuses, OCC.total);
+  OCC.seatStatuses = seatStatuses;
+  OCC.halfDay = counts.halfDay;
+  OCC.fullDayReserved = counts.fullDayReserved;
+  OCC.date = dateLabel || OCC.date;
 }
 
 function parseCsv(text) {
@@ -119,7 +208,7 @@ function getOccupancyColumnIndex(headers, candidates) {
   return -1;
 }
 
-function summarizeOccupancyCsv(csvText, totalSeats) {
+function extractOccupancyEntriesFromCsv(csvText) {
   var rows = parseCsv(csvText);
   if (!rows.length) {
     throw new Error('The occupancy CSV is empty.');
@@ -129,78 +218,43 @@ function summarizeOccupancyCsv(csvText, totalSeats) {
   var seatIndex = getOccupancyColumnIndex(headers, ['seat', 'seats', 'seatnumber', 'seatno']);
   var statusIndex = getOccupancyColumnIndex(headers, ['status', 'seatstatus', 'occupancystatus']);
 
+  if (seatIndex === -1) {
+    throw new Error('The occupancy CSV must include a Seat column.');
+  }
+
   if (statusIndex === -1) {
     throw new Error('The occupancy CSV must include a Status column.');
   }
 
-  var counts = {
-    halfDay: 0,
-    fullDayReserved: 0
-  };
-  var unsupportedStatuses = {};
-  var seatStatuses = {};
+  var entries = [];
 
   for (var i = 1; i < rows.length; i++) {
     var row = rows[i];
+    if (!row.length) {
+      continue;
+    }
+
+    var rawSeat = row[seatIndex];
     var rawStatus = row[statusIndex];
-    var statusType = classifyOccupancyStatus(rawStatus);
 
-    if (seatIndex !== -1) {
-      var rawSeat = row[seatIndex];
-      var seatNumber = parseInt(String(rawSeat || '').trim(), 10);
-      if (isNaN(seatNumber) || seatNumber < 1 || seatNumber > totalSeats) {
-        continue;
-      }
-
-      if (!statusType) {
-        unsupportedStatuses[String(rawStatus || '').trim() || '(blank)'] = true;
-        continue;
-      }
-
-      seatStatuses[seatNumber] = statusType;
+    if (!String(rawSeat || '').trim() && !String(rawStatus || '').trim()) {
       continue;
     }
 
-    if (!String(rawStatus || '').trim()) {
-      continue;
-    }
-
-    if (!statusType) {
-      unsupportedStatuses[String(rawStatus || '').trim() || '(blank)'] = true;
-      continue;
-    }
-
-    if (statusType === 'halfDay') {
-      counts.halfDay++;
-    } else if (statusType === 'fullDayReserved') {
-      counts.fullDayReserved++;
-    }
+    entries.push({
+      seat: rawSeat,
+      status: rawStatus
+    });
   }
 
-  if (seatIndex !== -1) {
-    for (var seat = 1; seat <= totalSeats; seat++) {
-      var seatStatus = seatStatuses[seat];
-      if (seatStatus === 'halfDay') {
-        counts.halfDay++;
-      } else if (seatStatus === 'fullDayReserved') {
-        counts.fullDayReserved++;
-      }
-    }
+  if (!entries.length) {
+    throw new Error('The occupancy CSV does not contain any seat rows.');
   }
 
-  var unknownStatusList = Object.keys(unsupportedStatuses);
-  if (unknownStatusList.length) {
-    throw new Error('Unsupported occupancy status values: ' + unknownStatusList.join(', '));
-  }
-
-  if (counts.halfDay + counts.fullDayReserved > totalSeats) {
-    throw new Error('Seat counts exceed the configured total of ' + totalSeats + '.');
-  }
-
-  return counts;
+  return entries;
 }
 
-function buildOccupancyCsvRequestUrl(baseUrl) {
+function buildOccupancyRequestUrl(baseUrl) {
   var joiner = baseUrl.indexOf('?') === -1 ? '?' : '&';
   return baseUrl + joiner + 'ts=' + Date.now();
 }
@@ -245,7 +299,7 @@ function fetchOccupancyData(triggerSource) {
   occRefreshInFlight = true;
   setOccupancyRefreshUi('loading', 'Checking the latest sheet data...');
 
-  fetch(buildOccupancyCsvRequestUrl(OCC_CSV_URL), { cache: 'no-store' })
+  fetch(buildOccupancyRequestUrl(OCC_CSV_URL), { cache: 'no-store' })
     .then(function (response) {
       if (!response.ok) {
         throw new Error('Request failed with status ' + response.status + '.');
@@ -253,16 +307,13 @@ function fetchOccupancyData(triggerSource) {
       return response.text();
     })
     .then(function (csvText) {
-      var counts = summarizeOccupancyCsv(csvText, OCC.total);
-      OCC.halfDay = counts.halfDay;
-      OCC.fullDayReserved = counts.fullDayReserved;
-      OCC.date = formatOccupancyTimestamp(new Date());
+      var entries = extractOccupancyEntriesFromCsv(csvText);
+      var normalized = normalizeOccupancyEntries(entries, OCC.total);
+      applyOccupancyState(normalized.seatStatuses, formatOccupancyTimestamp(new Date()));
       renderOccupancy();
       occRefreshInFlight = false;
       if (source === 'manual') {
         setOccupancyRefreshUi('idle', 'Seat data refreshed just now.');
-      } else if (source === 'initial') {
-        setOccupancyRefreshUi('idle', 'Live occupancy sync is active.');
       } else {
         setOccupancyRefreshUi('idle');
       }
@@ -273,17 +324,55 @@ function fetchOccupancyData(triggerSource) {
       occRefreshInFlight = false;
       if (source === 'manual') {
         setOccupancyRefreshUi('idle', 'Refresh failed. Showing the last available data.');
-      } else if (source === 'initial') {
-        setOccupancyRefreshUi('idle', 'Live sync is unavailable right now. Showing the last available data.');
       } else {
         setOccupancyRefreshUi('idle', 'Showing the last available data.');
       }
     });
 }
 
+function fetchOccupancySnapshot() {
+  if (!window.fetch) {
+    renderOccupancy();
+    return;
+  }
+
+  fetch(buildOccupancyRequestUrl(OCC_SNAPSHOT_URL), { cache: 'no-store' })
+    .then(function (response) {
+      if (!response.ok) {
+        throw new Error('Request failed with status ' + response.status + '.');
+      }
+      return response.json();
+    })
+    .then(function (snapshot) {
+      if (!snapshot || !Array.isArray(snapshot.seats)) {
+        throw new Error('The occupancy snapshot is invalid.');
+      }
+
+      var normalized = normalizeOccupancyEntries(snapshot.seats, OCC.total);
+      var snapshotDate = OCC.date;
+
+      if (snapshot.updatedAt) {
+        var updatedAt = new Date(snapshot.updatedAt);
+        if (!isNaN(updatedAt.getTime())) {
+          snapshotDate = formatOccupancyTimestamp(updatedAt);
+        }
+      }
+
+      applyOccupancyState(normalized.seatStatuses, snapshotDate);
+      renderOccupancy();
+    })
+    .catch(function (error) {
+      console.error('Unable to load occupancy snapshot.', error);
+      renderOccupancy();
+      setOccupancyRefreshUi('idle', 'Showing the last available data.');
+    });
+}
+
 function renderOccupancy() {
   var o      = OCC;
-  var taken  = o.halfDay + o.fullDayReserved;
+  var seatStatuses = o.seatStatuses || buildFallbackSeatStatuses(o.total, o.halfDay, o.fullDayReserved);
+  var counts = countSeatStatuses(seatStatuses, o.total);
+  var taken  = counts.halfDay + counts.fullDayReserved;
   var avail  = o.total - taken;
   var pct    = Math.round(taken / o.total * 100);
 
@@ -298,8 +387,8 @@ function renderOccupancy() {
   document.getElementById('occ-bar').style.width       = pct + '%';
 
   // Plan type bars
-  var halfDayPct = Math.round((o.halfDay / o.total) * 100);
-  var fullDayPct = Math.round((o.fullDayReserved / o.total) * 100);
+  var halfDayPct = Math.round((counts.halfDay / o.total) * 100);
+  var fullDayPct = Math.round((counts.fullDayReserved / o.total) * 100);
   document.getElementById('occ-half-day-pct').textContent = halfDayPct + '%';
   document.getElementById('occ-half-day-bar').style.width = halfDayPct + '%';
   document.getElementById('occ-full-day-pct').textContent = fullDayPct + '%';
@@ -308,11 +397,13 @@ function renderOccupancy() {
   // Build seat grid
   var grid = document.getElementById('seatGrid');
   grid.innerHTML = '';
-  for (var i = 0; i < o.total; i++) {
+  for (var i = 1; i <= o.total; i++) {
     var s = document.createElement('div');
+    var seatStatus = seatStatuses[i] || 'available';
+
     s.className = 'seat' +
-      (i < o.halfDay                  ? ' half-day' :
-       i < o.halfDay + o.fullDayReserved ? ' full-day-reserved' : '');
+      (seatStatus === 'halfDay' ? ' half-day' :
+       seatStatus === 'fullDayReserved' ? ' full-day-reserved' : '');
     grid.appendChild(s);
   }
 }
@@ -459,12 +550,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetchOccupancyData('manual');
       });
     }
-    fetchOccupancyData('initial');
-    if (OCC_CSV_URL && window.fetch) {
-      window.setInterval(function () {
-        fetchOccupancyData('auto');
-      }, OCC_POLL_INTERVAL_MS);
-    }
+    fetchOccupancySnapshot();
   }
   initGalleryLightbox();
 });
