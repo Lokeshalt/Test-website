@@ -1,0 +1,5 @@
+[
+  { "seat": 1, "status": "Available" },
+  { "seat": 2, "status": "Full Day" },
+  { "seat": 3, "status": "Half Day" }
+]
