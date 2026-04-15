@@ -239,8 +239,12 @@ section { padding: 4rem 5vw; }
 .plan-features { list-style: none; display: flex; flex-direction: column; gap: 7px; margin-bottom: 1.6rem; }
 .plan-features li { font-size: 0.81rem; color: var(--muted); display: flex; align-items: center; gap: 8px; }
 .plan-features li::before { content: ''; width: 13px; height: 13px; border-radius: 50%; background: var(--warm); border: 1.5px solid var(--gold); flex-shrink: 0; }
+.plan-features .highlight{font-weight: bold; color: var(--rust);}
+.plan-features .highlight::before {border-color: var(--rust-dark); }
 .plan-btn { width: 100%; margin-top: auto; padding: 11px; background: transparent; border: 1.5px solid var(--border); border-radius: 2px; font-family: 'DM Sans', sans-serif; font-size: 0.84rem; cursor: pointer; color: var(--ink); letter-spacing: 0.04em; transition: all 0.2s; display: block; text-align: center; text-decoration: none; box-sizing: border-box; }
 .plan-btn:hover, .plan-card.featured .plan-btn { background: var(--gold); color: #fff; border-color: var(--gold); }
+.plan-btn:hover {
+  transform: translateY(-4px);}
 
 /* ── ABOUT ── */
 .about-section { background: var(--ink); color: var(--cream); }
