@@ -537,7 +537,18 @@ function initGalleryLightbox() {
   });
 }
 
+/* ── Mouse tracking for service card. Remove this JS section if anything breaks. */
+document.querySelectorAll('.service-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
 
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    card.style.setProperty('--x', `${x}px`);
+    card.style.setProperty('--y', `${y}px`);
+  });
+});
 /* ── INIT ────────────────────────────────────────────────────
    Run on page load.
    ──────────────────────────────────────────────────────────── */

@@ -131,7 +131,7 @@ section { padding: 4rem 5vw; }
 @media (max-width: 960px) { .services-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 600px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
 .service-card { background: var(--card-bg); padding: 1.9rem 1.7rem; transition: background 0.2s; }
-.service-card:hover { background: #fbf0da; }
+/* .service-card:hover { background: #fbf0da; } */
 .service-icon { width: 33px; height: 33px; background: var(--warm); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; font-size: 0.9rem; }
 .service-name { font-family: 'Playfair Display', serif; font-size: 0.98rem; font-weight: 700; color: var(--ink); margin-bottom: 0.4rem; }
 .service-desc { font-size: 0.83rem; line-height: 1.6; color: var(--muted); }
@@ -472,4 +472,32 @@ footer { background: var(--ink); color: rgba(245,240,232,0.42); padding: 1.8rem 
   }
   .lightbox-image { max-height: calc(100vh - 8rem); }
   section { padding-top: 2rem; padding-bottom: 2rem;}
+}
+/* Subtle expanding circle effect on service cards - remove this section and uncomment the original CSS if anything breaks.*/
+
+.service-card {
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.service-card:before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+
+  top: var(--y);
+  left: var(--x);
+  background: linear-gradient(135deg, #fbf0da, #fbf0da);
+  transform: translate(-50%, -50%) scale(0);
+
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+
+  transition: transform 0.50s ease-out;
+}
+
+.service-card:hover:before {
+  transform: translate(-50%, -50%) scale(28);
 }
